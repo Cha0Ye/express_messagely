@@ -29,6 +29,23 @@ router.get('/', async function(req, res, next){
  *
  **/
 
+router.get('/:username', async function(req, res, next){
+    try{
+        let userName = req.params.username;
+        let user = await User.get(userName);
+        if(!user){
+            throw new ExpressError("User does not exist!",404);
+        }
+
+        return res.json(user);
+    }
+    catch(err){
+        next(err);
+    }
+
+
+});
+
 
 /** GET /:username/to - get messages to user
  *
