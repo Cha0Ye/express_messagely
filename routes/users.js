@@ -1,8 +1,26 @@
+const express = require('express');
+const User = require('../models/user');
+const ExpressError = require('../expressError');
+
+const router = express.Router();
+
 /** GET / - get list of users.
  *
  * => {users: [{username, first_name, last_name, phone}, ...]}
  *
  **/
+
+router.get('/', async function(req, res, next){
+    try{
+        const users = await User.all();
+
+        return res.json({ users });
+    }
+    catch(err){
+        next(err);
+    }
+})
+
 
 
 /** GET /:username - get detail of users.
@@ -32,3 +50,6 @@
  *                 to_user: {username, first_name, last_name, phone}}, ...]}
  *
  **/
+
+
+ module.exports = router;

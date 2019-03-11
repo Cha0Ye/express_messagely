@@ -1,10 +1,11 @@
 const express = require('express');
-const router = express.Router();
 const User = require('../models/user');
 const ExpressError = require('../expressError');
 const jwt = require('jsonwebtoken');
 const { SECRET_KEY } = require("../config");
+
 const OPTIONS = {expiresIn: 60*60};
+const router = express.Router();
 
 /** POST /register - register user: registers, logs in, and returns token.
  *
