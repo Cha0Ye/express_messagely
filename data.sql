@@ -5,7 +5,7 @@ CREATE TABLE users (
     last_name text NOT NULL,
     phone text,
     email text,
-    join_at timestamp without time zone NOT NULL,
+    join_at timestamp without time zone DEFAULT CURRENT_DATE NOT NULL,
     last_login_at timestamp without time zone
 );
 
