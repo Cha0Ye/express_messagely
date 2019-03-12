@@ -72,10 +72,10 @@ class User {
    *          join_at,
    *          last_login_at } */
 
-  static async get(username) { 
+  static async get(username) {
     const user = await db.query(
       `SELECT username, first_name, last_name, phone, join_at, last_login_at
-      FROM users
+       FROM users
       WHERE username=$1`, [username]);
     return user.rows[0];
   }
@@ -88,7 +88,27 @@ class User {
    *   {username, first_name, last_name, phone}
    */
 
-  static async messagesFrom(username) { }
+  static async messagesFrom(username) {
+    const result = await db.query(
+      `SELECT id, body, sent_at, read_at, u2.username, u2.first_name, u2.last_name, u2.phone
+       FROM users AS u1
+       JOIN messages ON u1.username = from_username
+       JOIN users AS u2 ON messages.to_username = u2.username
+      WHERE u1.username=$1`,
+      [username]);
+
+      const messages = result.rows;
+
+      const newMessages = [];
+      for(let message of messages){
+        let {id, body, sent_at, read_at, ...rest} = message;
+        // message["to_user"] = rest;
+        newMessages.push({id, body, sent_at, read_at, 'to_user': rest});
+
+      }
+
+      return newMessages;
+  }
 
   /** Return messages to this user.
    *
@@ -98,7 +118,9 @@ class User {
    *   {id, first_name, last_name, phone}
    */
 
-  static async messagesTo(username) { }
+  static async messagesTo(username) {
+
+  }
 }
 
 

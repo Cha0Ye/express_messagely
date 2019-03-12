@@ -17,6 +17,7 @@
     "express-cors": "0.0.3",
     "jsonwebtoken": "^8.5.0",
     "nodemon": "^1.18.10",
-    "pg": "^7.5.0"
+    "pg": "^7.5.0",
+    "supertest": "^3.1.0"
   }
 }
