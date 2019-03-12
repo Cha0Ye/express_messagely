@@ -70,9 +70,9 @@ class Message {
 
     // throw new Error(result.rows.length);
     let m = result.rows[0];
-
+      console.log("this is m", m);
     if (!m) {
-      throw new Error({ message: `No such message: ${id}`, status: 404 });
+      throw { message: `No such message: ${id}`, status: 404 };
     }
 
     return {
