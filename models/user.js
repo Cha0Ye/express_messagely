@@ -119,6 +119,20 @@ class User {
    */
 
   static async messagesTo(username) {
+    const result = db.query(
+      `SELECT id, body, sent_at, read_at, u2.username, u2.first_name, u2.last_name, u2.phone
+      FROM users AS u1
+      JOIN messages
+      ON u1.username = to_username
+      JOIN users AS u2
+      ON from_username = u2.username
+      WHERE u1.username=$1`, [username]);
+      const messages =[];
+      for(let message of result.rows){
+        let {id, body, sent_at, read_at, ...rest} = message;
+        messages.push({id, body, sent_at, read_at, "from_user":rest});
+      }
+      return messages;
 
   }
 }
