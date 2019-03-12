@@ -84,3 +84,10 @@ router.post('/', ensureLoggedIn, async function(req, res, next) {
  })
 
 module.exports = router;
+
+
+/* 
+"_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkN5bnRoaWEiLCJpYXQiOjE1NTI0MTM5NzgsImV4cCI6MTU1MjQxNzU3OH0.XTrQR0zA5Uw2-5xQO8uImEre3dlyNRnNaj612qOX4ME",
+"to_username": "Whiskey",
+	"body":"hello there! "
+*/
