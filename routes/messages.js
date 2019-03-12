@@ -1,7 +1,7 @@
 const express = require('express');
 const Message = require('../models/message');
 const ExpressError = require('../expressError');
-const { ensureLoggedIn, ensureCorrectUser} = require('../middleware/auth'); 
+const { ensureLoggedIn, ensureCorrectUser} = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -19,10 +19,15 @@ const router = express.Router();
  * Make sure that the currently-logged-in users is either the to or from user.
  *
  **/
-router.get('/:id', async function(req, res, next){
+router.get('/:id', ensureLoggedIn, async function(req, res, next){
     try{
+
         const id = req.params.id;
         const message = await Message.get(id);
+
+        if(message.from_user.username !== req.user.username && message.to_user.username !== req.user.username){
+            throw new ExpressError("Not authorized", 404);
+        }
 
         return res.json({ message });
     } catch(err){
@@ -60,12 +65,22 @@ router.post('/', ensureLoggedIn, async function(req, res, next) {
  *
  **/
 
-module.exports = router;
+ router.post('/:id/read', ensureLoggedIn, async function(req, res, next){
+     try{
+        const id = req.params.id;
+        const message = await Message.get(id);
+        const to_username = message.to_user.username;
 
-/** 
- * 
-	"_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkN5bnRoaWEiLCJpYXQiOjE1NTI0MTM5NzgsImV4cCI6MTU1MjQxNzU3OH0.XTrQR0zA5Uw2-5xQO8uImEre3dlyNRnNaj612qOX4ME",
-"to_username": "Cynthia",
-	"body":"hello there!"
-}
- */
+        if(req.user.username !== to_username){
+            throw new ExpressError("Not authorized", 404);
+        }
+
+        let markedMessage = await Message.markRead(id);
+
+        return res.json({ "message": markedMessage });
+     } catch(err) {
+         next(err);
+     }
+ })
+
+module.exports = router;
