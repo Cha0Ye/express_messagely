@@ -61,7 +61,7 @@ router.get('/:username/to', async function(req, res, next){
         const username = req.params.username;
         const messagesFrom = await User.messagesTo(username);
 
-        return res.json(messagesFrom);
+        return res.json({"messages": messagesFrom});
 
     } catch(err){
         next(err);
@@ -83,7 +83,7 @@ router.get('/:username/from', async function(req, res, next){
         const username = req.params.username;
         const messagesFrom = await User.messagesFrom(username);
 
-        return res.json(messagesFrom);
+        return res.json({"messages": messagesFrom});
 
     } catch(err){
         next(err);
