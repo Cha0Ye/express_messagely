@@ -25,8 +25,11 @@ router.get('/:id', ensureLoggedIn, async function(req, res, next){
         const id = req.params.id;
         const message = await Message.get(id);
 
-        if(message.from_user.username !== req.user.username && message.to_user.username !== req.user.username){
-            throw new ExpressError("Not authorized", 404);
+        const curr_user = req.user.username;
+
+        if(message.from_user.username !== curr_user &&
+            message.to_user.username !== curr_user){
+            throw new ExpressError("Not authorized", 401);
         }
 
         return res.json({ message });
@@ -47,7 +50,7 @@ router.post('/', ensureLoggedIn, async function(req, res, next) {
     try{
         let currentUser = req.user.username;
         let {to_username, body} = req.body;
-        let result = await Message.create({from_username:currentUser, to_username, body});
+        let result = await Message.create({from_username: currentUser, to_username, body});
         return res.json({"message":result})
     }
     catch(err){
@@ -72,7 +75,7 @@ router.post('/', ensureLoggedIn, async function(req, res, next) {
         const to_username = message.to_user.username;
 
         if(req.user.username !== to_username){
-            throw new ExpressError("Not authorized", 404);
+            throw new ExpressError("Not authorized", 401);
         }
 
         let markedMessage = await Message.markRead(id);
@@ -86,7 +89,7 @@ router.post('/', ensureLoggedIn, async function(req, res, next) {
 module.exports = router;
 
 
-/* 
+/*
 "_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkN5bnRoaWEiLCJpYXQiOjE1NTI0MTM5NzgsImV4cCI6MTU1MjQxNzU3OH0.XTrQR0zA5Uw2-5xQO8uImEre3dlyNRnNaj612qOX4ME",
 "to_username": "Whiskey",
 	"body":"hello there! "

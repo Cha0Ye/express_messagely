@@ -100,8 +100,8 @@ class User {
     const result = await db.query(
       `SELECT id, body, sent_at, read_at, u2.username, u2.first_name, u2.last_name, u2.phone
        FROM users AS u1
-       JOIN messages ON u1.username = from_username
-       JOIN users AS u2 ON messages.to_username = u2.username
+         JOIN messages ON u1.username = from_username
+         JOIN users AS u2 ON messages.to_username = u2.username
       WHERE u1.username=$1`,
       [username]);
 
@@ -109,11 +109,12 @@ class User {
 
       const newMessages = [];
       for(let message of messages){
-        let {id, body, sent_at, read_at, ...rest} = message;
+        let {id, body, sent_at, read_at, ...to_user} = message;
         // message["to_user"] = rest;
-        newMessages.push({id, body, sent_at, read_at, 'to_user': rest});
+        newMessages.push({id, body, sent_at, read_at, to_user});
 
       }
+
 
       return newMessages;
   }
@@ -129,20 +130,21 @@ class User {
   static async messagesTo(username) {
     const result = await db.query(
       `SELECT id, body, sent_at, read_at, u2.username, u2.first_name, u2.last_name, u2.phone
-      FROM users AS u1
-      JOIN messages
-      ON u1.username = to_username
-      JOIN users AS u2
-      ON from_username = u2.username
+       FROM users AS u1
+         JOIN messages
+           ON u1.username = to_username
+         JOIN users AS u2
+           ON from_username = u2.username
       WHERE u1.username=$1`, [username]);
 
-      const messages =[];
+      const messages = result.rows;
 
-      for(let message of result.rows){
-        let {id, body, sent_at, read_at, ...rest} = message;
-        messages.push({id, body, sent_at, read_at, "from_user":rest});
+      const newMessages = [];
+      for(let message of messages){
+        let {id, body, sent_at, read_at, ...from_user} = message;
+        newMessages.push({id, body, sent_at, read_at, from_user});
       }
-      return messages;
+      return newMessages;
 
   }
 }

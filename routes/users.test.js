@@ -11,7 +11,6 @@ beforeEach(async () => {
     await db.query(`DELETE FROM users`);
     await db.query(`DELETE FROM messages`);
 
-
     let userResult = await db.query(
         `INSERT INTO
         users(username, password, first_name, last_name, phone, email, join_at)
@@ -19,11 +18,6 @@ beforeEach(async () => {
         RETURNING username, password, first_name, last_name, phone, email, join_at, last_login_at`);
 
     user = userResult.rows[0];
-
-
-    
-
-
 });
 
 afterAll( async () => {
