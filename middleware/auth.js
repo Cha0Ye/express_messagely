@@ -1,14 +1,14 @@
 /** Middleware for handling req authorization for routes. */
 
 const jwt = require("jsonwebtoken");
-const { SECRET } = require("../config");
+const { SECRET_KEY } = require("../config");
 
 /** Middleware: Authenticate user. */
 
 function authenticateJWT(req, res, next) {
   try {
     const tokenFromBody = req.body._token;
-    const payload = jwt.verify(tokenFromBody, SECRET);
+    const payload = jwt.verify(tokenFromBody, SECRET_KEY);
     req.user = payload; // create a current user
     return next();
   } catch (err) {

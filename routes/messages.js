@@ -1,6 +1,7 @@
 const express = require('express');
 const Message = require('../models/message');
 const ExpressError = require('../expressError');
+const { ensureLoggedIn, ensureCorrectUser} = require('../middleware/auth'); 
 
 const router = express.Router();
 
@@ -37,6 +38,18 @@ router.get('/:id', async function(req, res, next){
  *   {message: {id, from_username, to_username, body, sent_at}}
  *
  **/
+router.post('/', ensureLoggedIn, async function(req, res, next) {
+    try{
+        let currentUser = req.user.username;
+        let {to_username, body} = req.body;
+        let result = await Message.create({from_username:currentUser, to_username, body});
+        return res.json({"message":result})
+    }
+    catch(err){
+        next(err);
+    }
+
+});
 
 
 /** POST/:id/read - mark message as read:
@@ -48,3 +61,11 @@ router.get('/:id', async function(req, res, next){
  **/
 
 module.exports = router;
+
+/** 
+ * 
+	"_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkN5bnRoaWEiLCJpYXQiOjE1NTI0MTM5NzgsImV4cCI6MTU1MjQxNzU3OH0.XTrQR0zA5Uw2-5xQO8uImEre3dlyNRnNaj612qOX4ME",
+"to_username": "Cynthia",
+	"body":"hello there!"
+}
+ */
